@@ -70,6 +70,24 @@ func main() {
 		}
 	}
 
+	// printout the ending message
+	color.Cyan("-----------------")
+	color.Cyan("Done for the Day!")
+	color.Cyan("We made %d pizzas, failed to make %d, with %d attempts in total", pizzasMade, pizzasFailed, totalPizzas)
+
+	switch {
+	case pizzasFailed > 9:
+		color.Red("It was an awful day...")
+	case pizzasFailed >= 6:
+		color.Red("It was not a very good day...")
+	case pizzasFailed >= 4:
+		color.Yellow("It was an okay day....")
+	case pizzasFailed >= 2:
+		color.Yellow("It was a pretty good day!")
+	default:
+		color.Green("It was a great day!")
+	}
+
 }
 
 // pizzeria is a goroutine that runs in the background
