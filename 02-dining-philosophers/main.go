@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -43,5 +44,24 @@ func main() {
 }
 
 func dine() {
+	// create a waitGroup for every one done eating
+	wg := &sync.WaitGroup{}
+	wg.Add(len(philosophers))
 
+	seated := &sync.WaitGroup{}
+	seated.Add(len(philosophers))
+
+	// forks is the map of all 5 forks.
+	var forks = make(map[int]*sync.Mutex)
+	for i := 0; i < len(philosophers); i++ {
+		forks[i] = &sync.Mutex{}
+	}
+
+	// start the meal
+	for i := 0; i < len(philosophers); i++ {
+		go diningProblem(philosophers[i], wg, forks, seated)
+	}
+}
+
+func diningProblem(philosophers Philosopher, wg *sync.WaitGroup, forks map[int]*sync.Mutex, seated *sync.WaitGroup) {
 }
