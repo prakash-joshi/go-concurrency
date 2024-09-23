@@ -43,11 +43,17 @@ func main() {
 	fmt.Println("The table is empty.")
 }
 
+// dine simulates the dining philosophers problem using goroutines and wait groups.
+// It initializes a wait group to track when all philosophers have finished eating and another for seating.
+// A map of forks (mutexes) is created to represent shared resources.
+// For each philosopher, a goroutine is started to simulate the dining process with a call to `diningProblem`.
+// The function waits for all philosophers to complete their dining before returning.
 func dine() {
 	// create a waitGroup for every one done eating
 	wg := &sync.WaitGroup{}
 	wg.Add(len(philosophers))
 
+	// create a waitGroup for every one done seating
 	seated := &sync.WaitGroup{}
 	seated.Add(len(philosophers))
 
@@ -62,9 +68,18 @@ func dine() {
 		go diningProblem(philosophers[i], wg, forks, seated)
 	}
 
+	// wait for the philosophers to finish dining
 	wg.Wait()
 }
 
+// diningProblem simulates the actions of a single philosopher in the dining philosophers problem.
+// Each philosopher will attempt to pick up the two forks they need to eat, one on their left and one on their right.
+// The function ensures that mutual exclusion is maintained to avoid deadlock or starvation.
+// Parameters:
+// - philosophers: A reference to a Philosopher, representing the individual philosopher participating in the simulation.
+// - wg: A pointer to sync.WaitGroup, used to track when all philosophers have finished their actions.
+// - forks: A map where each fork is represented by a sync.Mutex, ensuring only one philosopher can hold a fork at any time.
+// - seated: A pointer to sync.WaitGroup, used to synchronize when all philosophers are seated before they start dining.
 func diningProblem(philosophers Philosopher, wg *sync.WaitGroup, forks map[int]*sync.Mutex, seated *sync.WaitGroup) {
 
 	defer wg.Done()
