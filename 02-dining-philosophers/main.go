@@ -61,7 +61,41 @@ func dine() {
 	for i := 0; i < len(philosophers); i++ {
 		go diningProblem(philosophers[i], wg, forks, seated)
 	}
+
+	wg.Wait()
 }
 
 func diningProblem(philosophers Philosopher, wg *sync.WaitGroup, forks map[int]*sync.Mutex, seated *sync.WaitGroup) {
+
+	defer wg.Done()
+
+	// seat the philosophers at the table
+	seated.Done()
+	fmt.Printf("%s has been seated.\n", philosophers.name)
+	seated.Wait()
+
+	// philosopher eats
+	for i := hunger; i >= 0; i-- {
+
+		// get a lock on both forks
+		forks[philosophers.leftFork].Lock()
+		forks[philosophers.rightFork].Lock()
+		fmt.Printf("\t%s has picked up left fork.\n", philosophers.name)
+		fmt.Printf("\t%s has picked up right fork.\n", philosophers.name)
+
+		fmt.Printf("\t%s has both the forks and is eating.\n", philosophers.name)
+		time.Sleep(eatTime)
+
+		fmt.Printf("\t%s is thinking.\n", philosophers.name)
+		time.Sleep(thinkTime)
+
+		forks[philosophers.leftFork].Unlock()
+		forks[philosophers.rightFork].Unlock()
+
+		fmt.Printf("\t%s has put down both the forks.\n", philosophers.name)
+	}
+
+	fmt.Println(philosophers.name, "has finished eating.")
+	fmt.Println(philosophers.name, "has left the table.")
+
 }
