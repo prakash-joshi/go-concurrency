@@ -94,12 +94,18 @@ func diningProblem(philosophers Philosopher, wg *sync.WaitGroup, forks map[int]*
 
 		// get a lock on both forks
 
+		// edge case for race condition
+		// logical race condition here may cause a deadlock situation
+		// race condition not guaranteed to happen every time
+		// lock the lower numbered fork first to avoid the deadlock scenario
 		if philosophers.leftFork > philosophers.rightFork {
+			// for Aristotle the left fork is higher numbered than right fork so we lock the right fork first
 			forks[philosophers.rightFork].Lock()
 			forks[philosophers.leftFork].Lock()
 			fmt.Printf("\t%s has picked up right fork.\n", philosophers.name)
 			fmt.Printf("\t%s has picked up left fork.\n", philosophers.name)
 		} else {
+			// for all others left fork is lower numbered so it is locked first
 			forks[philosophers.leftFork].Lock()
 			forks[philosophers.rightFork].Lock()
 			fmt.Printf("\t%s has picked up left fork.\n", philosophers.name)
