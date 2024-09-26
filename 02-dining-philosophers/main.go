@@ -30,6 +30,11 @@ var (
 	sleepTime = 1 * time.Second // time taken to pause before eating again
 )
 
+var (
+	orderMutex    sync.Mutex // a mutex for the slice orderFinished;
+	orderFinished []string   // a slice to recorder the order in which philosophers finish dining
+)
+
 func main() {
 	// print a welcome message
 	fmt.Println("Dining Philosophers Problem.")
@@ -70,6 +75,14 @@ func dine() {
 
 	// wait for the philosophers to finish dining
 	wg.Wait()
+
+	fmt.Println("====================================")
+	for _, r := range orderFinished {
+		fmt.Println(r, "has finished eating.")
+		fmt.Println(r, "has left the table.")
+	}
+	fmt.Println("====================================")
+
 }
 
 // diningProblem simulates the actions of a single philosopher in the dining philosophers problem.
@@ -124,7 +137,8 @@ func diningProblem(philosophers Philosopher, wg *sync.WaitGroup, forks map[int]*
 		fmt.Printf("\t%s has put down both the forks.\n", philosophers.name)
 	}
 
-	fmt.Println(philosophers.name, "has finished eating.")
-	fmt.Println(philosophers.name, "has left the table.")
+	orderMutex.Lock()
+	orderFinished = append(orderFinished, philosophers.name)
+	orderMutex.Unlock()
 
 }
