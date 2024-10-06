@@ -32,10 +32,10 @@ import (
 )
 
 var (
-	seatingCapacity = 10
-	arrivalRate     = 100
-	cutDuration     = 1000 * time.Millisecond
-	timeOpen        = 10 * time.Second
+	seatingCapacity = 10                      // seating capacity
+	arrivalRate     = 100                     // time interval between customer arrival at the shop
+	cutDuration     = 1000 * time.Millisecond // time taken to cut a customers hair
+	timeOpen        = 10 * time.Second        // amount of time the shop will be open
 )
 
 func main() {
@@ -73,10 +73,15 @@ func main() {
 	shopClosed := make(chan bool)
 	shopClosing := make(chan bool)
 
+	// this function runs as go routine and p
 	go func() {
+		// keep the shop open  for the given time
 		<-time.After(timeOpen)
+		// prepare to close the shop
 		shopClosing <- true
+		// start the shop closure process
 		shop.closeShopForDay()
+		// send confirmation to the main routine to close the shop
 		shopClosed <- true
 	}()
 
@@ -88,8 +93,10 @@ func main() {
 			// get a random number with average client arrival rate
 			randomMilliSeconds := rand.Int() % (2 * arrivalRate)
 			select {
+			// the shop is closing stop accepting new customers
 			case <-shopClosing:
 				return
+			// seat the new customer in the waiting room
 			case <-time.After(time.Millisecond * time.Duration(randomMilliSeconds)):
 				shop.addClient(fmt.Sprintf("Client #%d", i))
 				i++
@@ -98,7 +105,6 @@ func main() {
 	}()
 
 	// block until the barbershop is closed
-
-	// time.Sleep(5 * time.Second)
+	// end the process when we get confirmation that the shop is closed
 	<-shopClosed
 }

@@ -74,8 +74,11 @@ func (shop *BarberShop) addClient(client string) {
 
 	if shop.Open {
 		select {
+		// if the clientChan is not full add the new client
+		// i.e seat the new customer in waiting room if it is not full
 		case shop.ClientChan <- client:
 			color.Blue("%s takes a seat in the waiting room.", client)
+		// if the waiting room is full the customer leaves
 		default:
 			color.Red("The waiting room is full so %s leaves.", client)
 		}
@@ -91,6 +94,7 @@ func (shop *BarberShop) closeShopForDay() {
 	shop.Open = false
 
 	for a := 1; a <= shop.NumberOfBarbers; a++ {
+		// confirm all the barbers are done for the day
 		<-shop.BarbersDoneChan
 	}
 
