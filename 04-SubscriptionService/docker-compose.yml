@@ -3,7 +3,8 @@ version: "3"
 services:
   #  start Postgres, and ensure that data is stored to a mounted volume
   postgres:
-    image: "postgres"
+    image: "postgres:latest"
+    container_name: docker-postgres
     ports:
       - "5432:5432"
     restart: always
