@@ -17,7 +17,7 @@ import (
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-const webPort = "80"
+const webPort = "8080"
 
 func main() {
 	// connect to database
@@ -82,6 +82,7 @@ func connectToDB() *sql.DB {
 		connection, err := openDB(dsn)
 		if err != nil {
 			log.Println("Postgres not yet connected....")
+			log.Println(err)
 		} else {
 			log.Println("Connected to Postgres!!")
 			return connection
