@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"subscription-service/data"
 	"sync"
 
 	"github.com/alexedwards/scs/v2"
@@ -14,4 +15,5 @@ type Config struct {
 	InfoLog  *log.Logger
 	ErrorLog *log.Logger
 	Wait     *sync.WaitGroup
+	Models   data.Models
 }
