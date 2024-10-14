@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -119,6 +120,9 @@ func openDB(dsn string) (*sql.DB, error) {
 }
 
 func initSession() *scs.SessionManager {
+	// register the user model data type
+	gob.Register(data.User{})
+
 	//set up session
 	session := scs.New()
 
