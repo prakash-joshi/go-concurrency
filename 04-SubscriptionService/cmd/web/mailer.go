@@ -173,4 +173,16 @@ func (m *Mail) getEncryption(e string) mail.Encryption {
 	}
 }
 
-// TODO : add a function to listen to messages on MailerChan
+// function to listen to messages on MailerChan
+func (app *Config) listenForMail() {
+	for {
+		select {
+		case msg := <-app.Mailer.MailerChan:
+			go app.Mailer.sendMail(msg, app.Mailer.ErrorChan)
+		case err := <-app.Mailer.ErrorChan:
+			app.ErrorLog.Println(err)
+		case <-app.Mailer.DoneChan:
+			return
+		}
+	}
+}
