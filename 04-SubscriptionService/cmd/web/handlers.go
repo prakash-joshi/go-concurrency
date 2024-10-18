@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
+	"subscription-service/data"
 )
 
 func (app *Config) HomePage(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +78,43 @@ func (app *Config) RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Config) PostRegisterPage(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.ErrorLog.Println(err)
+	}
+
+	// create a user
+	u := data.User{
+		Email:     r.Form.Get("email"),
+		FirstName: r.Form.Get("first-name"),
+		LastName:  r.Form.Get("last-name"),
+		Password:  r.Form.Get("password"),
+		Active:    0,
+		IsAdmin:   0,
+	}
+	_, err = u.Insert(u)
+	if err != nil {
+		app.ErrorLog.Println(err)
+		app.Sessions.Put(r.Context(), "error", "Unable to create user.")
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
+
+	// send an activation email
+	url := fmt.Sprintf("http://localhost/activate?email=%s", u.Email)
+	signedURL := GenerateTokenFromString(url)
+	app.InfoLog.Println(signedURL)
+
+	msg := Message{
+		To:       u.Email,
+		Subject:  "Activate your account",
+		Template: "confirmation-email",
+		Data:     template.HTML(signedURL),
+	}
+
+	app.sendEmail(msg)
+	app.Sessions.Put(r.Context(), "flash", "Confirmation email sent")
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 
 }
 
