@@ -101,7 +101,7 @@ func (app *Config) PostRegisterPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send an activation email
-	url := fmt.Sprintf("http://localhost/activate?email=%s", u.Email)
+	url := fmt.Sprintf("http://localhost:8080/activate?email=%s", u.Email)
 	signedURL := GenerateTokenFromString(url)
 	app.InfoLog.Println(signedURL)
 
@@ -119,5 +119,35 @@ func (app *Config) PostRegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Config) ActivateAccount(w http.ResponseWriter, r *http.Request) {
+	// validate the url
+	url := r.RequestURI
+	app.InfoLog.Println("url :", url)
+	testURL := fmt.Sprintf("http://localhost:8080%s", url)
+	ok := VerifyToken(testURL)
 
+	if !ok {
+		app.Sessions.Put(r.Context(), "error", "Invalid token.")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	// activate the account
+	app.InfoLog.Println("email id : ", r.URL.Query().Get("email"))
+	u, err := app.Models.User.GetByEmail(r.URL.Query().Get("email"))
+	if err != nil {
+		app.Sessions.Put(r.Context(), "error", "No user found.")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	u.Active = 1
+	err = u.Update()
+	if err != nil {
+		app.Sessions.Put(r.Context(), "error", "Unable to update user.")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	app.Sessions.Put(r.Context(), "flash", "Account activated. You can log in now.")
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
