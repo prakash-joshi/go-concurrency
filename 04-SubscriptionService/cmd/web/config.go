@@ -10,11 +10,13 @@ import (
 )
 
 type Config struct {
-	Sessions *scs.SessionManager
-	DB       *sql.DB
-	InfoLog  *log.Logger
-	ErrorLog *log.Logger
-	Wait     *sync.WaitGroup
-	Models   data.Models
-	Mailer   Mail
+	Sessions      *scs.SessionManager
+	DB            *sql.DB
+	InfoLog       *log.Logger
+	ErrorLog      *log.Logger
+	Wait          *sync.WaitGroup
+	Models        data.Models
+	Mailer        Mail
+	ErrorChan     chan error
+	ErrorChanDone chan bool
 }
