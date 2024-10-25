@@ -175,7 +175,10 @@ func (app *Config) ChooseSubscription(w http.ResponseWriter, r *http.Request) {
 func (app *Config) SubscribeToPlan(w http.ResponseWriter, r *http.Request) {
 	// get the id of the plan chosen
 	id := r.URL.Query().Get("id")
-	planID, _ := strconv.Atoi(id)
+	planID, err := strconv.Atoi(id)
+	if err != nil {
+		app.ErrorLog.Println("Error getting planID :", err)
+	}
 
 	// get the plan from db
 	plan, err := app.Models.Plan.GetOne(planID)
