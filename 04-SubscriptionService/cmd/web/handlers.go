@@ -242,12 +242,23 @@ func (app *Config) SubscribeToPlan(w http.ResponseWriter, r *http.Request) {
 		app.ErrorChan <- errors.New("some custom error")
 	}()
 
-	// send an email with the manual attached
-
 	// subscribe the user to an account
+	err = app.Models.Plan.SubscribeUserToPlan(user, *plan)
+	if err != nil {
+		app.Sessions.Put(r.Context(), "error", "Error subscribing to a plan!")
+		http.Redirect(w, r, "/members/plan", http.StatusSeeOther)
+		return
+	}
+
+	u, err := app.Models.User.GetOne(user.ID)
+	if err != nil {
+		app.Sessions.Put(r.Context(), "error", "Error getting user from database!")
+		http.Redirect(w, r, "/members/plan", http.StatusSeeOther)
+		return
+	}
+	app.Sessions.Put(r.Context(), "user", u)
 
 	// redirect
-
 	app.Sessions.Put(r.Context(), "flash", "Subscribed!")
 	http.Redirect(w, r, "/members/plans", http.StatusSeeOther)
 
