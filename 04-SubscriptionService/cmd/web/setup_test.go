@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"golang.org/x/net/context"
 )
 
 var testApp Config
@@ -70,4 +71,14 @@ func TestMain(m *testing.M) {
 	}()
 
 	os.Exit(m.Run())
+}
+
+func getCtx(req *http.Request) context.Context {
+	ctx, err := testApp.Sessions.Load(req.Context(), req.Header.Get("X-Session"))
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	return ctx
 }
