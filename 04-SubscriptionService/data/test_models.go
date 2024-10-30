@@ -8,7 +8,10 @@ import (
 
 func TestNew(dbPool *sql.DB) Models {
 	db = dbPool
-	return Models{}
+	return Models{
+		User: &UserTest{},
+		Plan: &PlanTest{},
+	}
 }
 
 type UserTest struct {

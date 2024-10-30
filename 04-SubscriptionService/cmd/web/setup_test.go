@@ -34,6 +34,7 @@ func TestMain(m *testing.M) {
 		Wait:          &sync.WaitGroup{},
 		ErrorChan:     make(chan error),
 		ErrorChanDone: make(chan bool),
+		Models:        data.TestNew(nil),
 	}
 
 	// create a dummy mailer
