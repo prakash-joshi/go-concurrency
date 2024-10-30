@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -51,4 +52,19 @@ func TestConfig_IsAuthenticated(t *testing.T) {
 		t.Error("returns false for authenticated, when it should be true")
 	}
 
+}
+
+func TestConfig_Render(t *testing.T) {
+	pathToTemplates = "./templates"
+	rr := httptest.NewRecorder()
+
+	req, _ := http.NewRequest("GET", "/", nil)
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	testApp.render(rr, req, "home.page.gohtml", &TemplateData{})
+
+	if rr.Code != 200 {
+		t.Error("failed to render page")
+	}
 }
