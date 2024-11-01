@@ -7,6 +7,7 @@ import (
 	"strings"
 	"subscription-service/data"
 	"testing"
+	"time"
 )
 
 var pageTests = []struct {
@@ -94,5 +95,33 @@ func TestConfig_PostLoginPage(t *testing.T) {
 
 	if !testApp.Sessions.Exists(ctx, "userID") {
 		t.Error("did not find userID in session")
+	}
+}
+
+func TestConfig_SubscribeToPlan(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/subscribe?id=1", nil)
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	testApp.Sessions.Put(ctx, "user", data.User{
+		ID:        1,
+		Email:     "admin@example.com",
+		FirstName: "Admin",
+		LastName:  "User",
+		Password:  "abc",
+		Active:    1,
+		IsAdmin:   1,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
+
+	handler := http.HandlerFunc(testApp.SubscribeToPlan)
+	handler.ServeHTTP(rr, req)
+
+	testApp.Wait.Wait()
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("expected status code of %d, but code returned is %d", http.StatusSeeOther, rr.Code)
 	}
 }
