@@ -37,3 +37,10 @@ go tool cover -html=coverage.out
 ```
 
 Creates an interactive HTML report from the coverage profile, allowing visual exploration of test coverage in your browser.
+
+## Project Contents 🧭
+
+This repository contains the following implementations:
+
+- [Producer Consumer Pattern](./01-producer-consumer/README.md)
+  - A classic concurrent programming pattern implementation in Go
