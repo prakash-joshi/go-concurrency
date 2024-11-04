@@ -46,3 +46,5 @@ This repository contains the following implementations:
   - A classic concurrent programming pattern implementation in Go
 - [Dining Philosophers Problem](./02-dining-philosophers/README.md)
   - An implementation of Dijkstra's famous dining philosophers problem demonstrating deadlock prevention
+- [Sleeping Barber Problem](./03-sleeping-barber/README.md)
+  - A synchronization problem that demonstrates resource management and scheduling in concurrent programming
