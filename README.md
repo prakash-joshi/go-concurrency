@@ -44,3 +44,5 @@ This repository contains the following implementations:
 
 - [Producer Consumer Pattern](./01-producer-consumer/README.md)
   - A classic concurrent programming pattern implementation in Go
+- [Dining Philosophers Problem](./02-dining-philosophers/README.md)
+  - An implementation of Dijkstra's famous dining philosophers problem demonstrating deadlock prevention
