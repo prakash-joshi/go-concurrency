@@ -1,11 +1,39 @@
-## Commands to run go test cases 🛠️
+## Test Commands 🛠️
 
-go test -v -cover ./... :: This command shows the coverage in terminal, to show coverage highlighting in vs code I did the following.
+Here are the essential commands for running and analyzing Go test cases:
 
-go test -race . :: This command executes the test cases with race condition.
+### Basic Testing
 
-go test -race -v . :: This command will execute your tests in the current directory with the race detector enabled and verbose output.
+```bash
+go test -v -cover ./...
+```
 
-go test -coverprofile=coverage.out :: This command runs tests and generates a coverage profile file named coverage.out to analyze code coverage.
+Runs all tests recursively with verbose output and displays coverage in terminal.
 
-go tool cover -html=coverage.out :: This command converts the coverage profile file named coverage.out into an HTML report, which you can open in your browser to visually explore your test coverage.
+### Race Condition Testing
+
+```bash
+go test -race .
+```
+
+Executes test cases with race condition detection in the current directory.
+
+```bash
+go test -race -v .
+```
+
+Same as above but with verbose output for detailed test execution information.
+
+### Coverage Analysis
+
+```bash
+go test -coverprofile=coverage.out
+```
+
+Generates a coverage profile file (`coverage.out`) for detailed analysis.
+
+```bash
+go tool cover -html=coverage.out
+```
+
+Creates an interactive HTML report from the coverage profile, allowing visual exploration of test coverage in your browser.
